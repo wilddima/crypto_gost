@@ -3,6 +3,8 @@ require 'matrix'
 module CryptoGost
   module HashGost12
     # rubocop:disable Metrics/LineLength
+    HASH_LENGTH = 512
+
     PI = ['T', '\x97', '\xaf', 'f', '&', '\xa0', '\xa8', '', '\xe6', '\x8e', '\xec', '\x1f', '\xc7', '\xd3',
           '\xd5', '\x85', 'l', '\xa7', 'H', '\xb1', 'q', '\xc8', '\\', '\x9a', '@', 'o', '\n', '$', '\x02',
           '\x06', '\x0', '\xc3', '\xe8', '\x98', '\xe7', '\x1c', 'p', '\xb8', '\x8c', 'G', '\xa4', '\x93',
