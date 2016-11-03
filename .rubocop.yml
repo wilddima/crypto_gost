@@ -1,0 +1,4 @@
+AllCops:
+  Exclude:
+    - crypto_gost.gemspec
+    - Rakefile
