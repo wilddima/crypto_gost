@@ -4,17 +4,32 @@ require 'matrix'
 module CryptoGost
   # Message
   #
-  # @author Topornin Dmitry
+  # @author WildDima
   class Message
     attr_accessor :message, :message_vector
 
     def initialize(message)
       @message = message_type message
-      @message_vector = to_vector @message
     end
 
-    def [](index)
-      @message_vector[index]
+    def to_vector
+      Vector.elements message.bytes
+    end
+
+    def to_bits(byteorder: :big)
+      case byteorder
+      when :big
+        message.unpack('B*')
+      when :small
+        message.unpack('b*')
+      else
+        raise ArgumentError,
+              "byteorder must be equal to :big or :small, not: #{byteorder}"
+      end
+    end
+
+    def to_array_of_bits(byteorder: :big)
+      to_bits(byteorder).chars
     end
 
     private
@@ -28,10 +43,6 @@ module CryptoGost
       else
         message.to_s
       end
-    end
-
-    def to_vector(message)
-      Vector.elements message.bytes
     end
   end
 end
