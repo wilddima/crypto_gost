@@ -51,14 +51,11 @@ module CryptoGost
         [message, n, sum, hash_vector]
       end
 
-      def compression_func(n, hash_vector, _message)
-        linear_transformation(
-          permutation_t(
-            pi_replacement(
-              vectors_xor(hash_vector, n)
-            )
-          )
-        )
+      def compression_func(n, hash_vector, message)
+        vector = lpsx_func n, hash_vector
+        vector = func_e vector, message
+        vector = vectors_xor vector, hash_vector
+        vectors_xor vector, message
       end
 
       def vectors_xor(first_vector, second_vector)
@@ -82,11 +79,10 @@ module CryptoGost
       def linear_transformation(vector)
         new_vector = []
         vector.each_slice(8) do |vector8|
-          new_vector.merge small_linear_transformation(vector8.map do |b|
-                                                         b.to_s(2)
-                                                       end.join)
+          bits_string = vector8.map { |b| b.to_s(2) }.join
+          new_vector.merge small_linear_transformation(bits_string)
         end
-        new_vector
+        Vector.elements new_vector
       end
 
       def small_linear_transformation(vector)
@@ -100,6 +96,26 @@ module CryptoGost
           result ^= MATRIX_A[index]
         end
         result.to_s(2).chars.map(&:to_i)
+      end
+
+      def lpsx_func(first_vector, second_vector)
+        linear_transformation(
+          permutation_t(
+            pi_replacement(
+              vectors_xor(first_vector, second_vector)
+            )
+          )
+        )
+      end
+
+      def func_e(first_vector, second_vector)
+        v1 = first_vector.dup
+        v2 = second_vector.dup
+        (0..11).each do |index|
+          v1 = lpsx_func(v1, v2)
+          v2 = lpsx_func(v1, CONSTANTS_C[index].to_i(10).to_s(2))
+        end
+        vectors_xor v1, v2
       end
     end
   end
