@@ -51,12 +51,55 @@ module CryptoGost
         [message, n, sum, hash_vector]
       end
 
-      def compression_func(n, hash_vector, message)
-        [n, hash_vector, message]
+      def compression_func(n, hash_vector, _message)
+        linear_transformation(
+          permutation_t(
+            pi_replacement(
+              vectors_xor(hash_vector, n)
+            )
+          )
+        )
       end
 
-      def func_x(n, hash_vector)
-        n.xor hash_vector
+      def vectors_xor(first_vector, second_vector)
+        first_vector.xor second_vector
+      end
+
+      def replacement_pi(vector)
+        byte_array = []
+        vector.each_slice(8) { |byte| byte_array << PI[byte.join('').to_i(2)] }
+        Vector.elements byte_array
+      end
+
+      def permutation_t(vector)
+        byte_array = Array.new 64, 0
+        vector.each_with_index do |byte, index|
+          byte_array[T[index]] = byte
+        end
+        Vector.elements byte_array
+      end
+
+      def linear_transformation(vector)
+        new_vector = []
+        vector.each_slice(8) do |vector8|
+          new_vector.merge small_linear_transformation(vector8.map do |b|
+                                                         b.to_s(2)
+                                                       end.join)
+        end
+        new_vector
+      end
+
+      def small_linear_transformation(vector)
+        complete_vector = '0' * (64 - vector.length) + vector
+        indexes = []
+        result = 0
+        complete_vector.chars.each_with_index do |bit, index|
+          indexes << index unless bit.to_i.zero?
+        end
+        indexes.each do |index|
+          result ^= MATRIX_A[index]
+        end
+        result.to_s(2).chars.map(&:to_i)
       end
     end
   end
