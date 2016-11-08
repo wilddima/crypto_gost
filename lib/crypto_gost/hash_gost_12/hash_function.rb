@@ -36,20 +36,30 @@ module CryptoGost
       end
       # rubocop:enable Metrics/LineLength
 
+      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/AbcSize
       def message_cut(message, n, sum, hash_vector)
         # if message length, bigger than hash lengt
-        while message.length >= HASH_LENGTH / 8
-          message_last512 = message[-512..-1]
-          hash_vector = compression_func(n, hash_vector, message_last512)
+        message_temp = message.dup
+        n_temp = n.dup
+        sum_temp = sum.dup
+        hash_vector_temp = hash_vector.dup
+        while message_temp.length >= HASH_LENGTH / 8
+          message_last512 = message_temp[-512..-1]
+          hash_vector_temp = compression_func(n_temp,
+                                              hash_vector_temp,
+                                              message_last512)
           # N = (N + 512) 2**512
-          n = ((n + HASH_LENGTH) % 2)**HASH_LENGTH
+          n_temp = ((n_temp + HASH_LENGTH) % 2)**HASH_LENGTH
           # sum = sum + m 2**512
-          sum = ((sum + message_last512.unpack('N*').first) % 2)**HASH_LENGTH
+          sum_temp = ((sum_temp + message_last512.to_i) % 2)**HASH_LENGTH
           # remove hashed part of message
-          message = message[0..-64]
+          message_temp = message_temp[0..-64]
         end
         [message, n, sum, hash_vector]
       end
+      # rubocop:enable Metrics/MethodLength
+      # rubocop:ensable Metrics/AbcSize
 
       def compression_func(n, hash_vector, message)
         vector = lpsx_func n, hash_vector
