@@ -18,6 +18,7 @@ module CryptoGost
         @hash_vector = hash_vector digest_length
         @message, @n, @sum, @hash_vector = message_cut(@message, @n,
                                                        @sum, @hash_vector)
+        @message = addition_to512 @message
       end
 
       private
@@ -54,7 +55,7 @@ module CryptoGost
           # sum = sum + m 2**512
           sum_temp = ((sum_temp + message_last512.to_i) % 2)**HASH_LENGTH
           # remove hashed part of message
-          message_temp = message_temp[0..-64]
+          message_temp = message_temp[0..-512]
         end
         [message, n, sum, hash_vector]
       end
@@ -126,6 +127,14 @@ module CryptoGost
           v2 = lpsx_func(v1, CONSTANTS_C[index].to_i(10).to_s(2))
         end
         vectors_xor v1, v2
+      end
+
+      def addition_to512(vector)
+        v = vector.dup
+        addition_vector = '0' * (HASH_LENGTH - v.length)
+        addition_vector += '1' unless HASH_LENGTH == v.length
+        Vector.elements v.to_a.unshift(addition_vector.chars.map(&:to_i))
+          .flatten
       end
     end
   end
