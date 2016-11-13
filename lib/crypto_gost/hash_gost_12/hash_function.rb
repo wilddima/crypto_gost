@@ -20,22 +20,22 @@ module CryptoGost
         # @message, @n, @sum, @hash_vector = message_cut(@message, @n,
         #                                                @sum, @hash_vector)
         # @message = addition_to @message
-        # @message = (BinaryVector.new([1]) + @message).addition_to(size: 512)
-        @hash_vector = Compression.new(@n, @message, @hash_vector).start
+        @message_full = (BinaryVector.new([1]) + @message).addition_to(size: 512)
+        @hash_vector = Compression.new(@n, @message_full, @hash_vector).start
 
         @n_bv = BinaryVector.from_byte addition_in_ring(@n.to_dec, @message.size, 2**HASH_LENGTH), 
                                        size: 512
 
-        @sum_bv = BinaryVector.from_byte addition_in_ring(@sum.to_dec, @message.to_dec, 2**HASH_LENGTH), 
+        @sum_bv = BinaryVector.from_byte addition_in_ring(@sum.to_dec, @message_full.to_dec, 2**HASH_LENGTH),
                                          size: 512
 
         @hash_vector = Compression.new(BinaryVector.new(Array.new(512, 0)),
-                                       @hash_vector,
-                                       @n_bv).start
+                                       @n_bv,
+                                       @hash_vector).start
 
         @hash_vector = Compression.new(BinaryVector.new(Array.new(512, 0)),
-                                       @hash_vector,
-                                       @sum_bv).start
+                                       @sum_bv,
+                                       @hash_vector).start
       end
 
       private

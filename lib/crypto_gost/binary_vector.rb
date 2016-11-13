@@ -28,7 +28,7 @@ module CryptoGost
     end
 
     def +(vector)
-      self.class.new @vector + vector
+      self.class.new @vector + vector.to_a
     end
 
     def addition_to(size: 512)
