@@ -36,7 +36,7 @@ module CryptoGost
       end
 
       def to_i
-        raise_binary_error(v)
+        raise_binary_error
         @elements.to_a.map(&:to_s).join.to_i(2)
       end
 
@@ -46,10 +46,10 @@ module CryptoGost
         v.to_a.any? { |el| [0, 1].include? el }
       end
 
-      def raise_binary_error(v)
-        Vector.Raise ErrDimensionMismatch unless (size == v.size) &&
-                                                 binary?(v) &&
-                                                 binary?(@elements)
+      def raise_binary_error(v = @elements)
+        raise 'ErrDimensionMismatch' unless (size == v.size) &&
+                                            binary?(v) &&
+                                            binary?(@elements)
       end
     end
     # rubocop:enable Metrics/LineLength
