@@ -2,3 +2,5 @@ AllCops:
   Exclude:
     - crypto_gost.gemspec
     - Rakefile
+    - bin/test.rb
+    - spec/**/*

@@ -11,9 +11,8 @@ module CryptoGost
       end
 
       def from_byte_array(byte_array, size: 8)
-        new(byte_array.map do |byte|
-                        from_byte(byte, size: size).to_a
-                      end.inject([]) { |sum, byte| sum + byte })
+        new(byte_array.map { |byte| from_byte(byte, size: size).to_a }
+                      .inject([]) { |acc, elem| acc + elem })
       end
     end
 
@@ -22,13 +21,13 @@ module CryptoGost
       raise 'NotBinaryError' unless binary?
     end
 
-    def ^(vector)
-      raise 'DimensionError' unless according_dimension?(vector)
-      self.class.new @vector.map.with_index { |bit, index| bit ^ vector[index] }
+    def ^(other)
+      raise 'DimensionError' unless according_dimension?(other)
+      self.class.new @vector.map.with_index { |bit, index| bit ^ other[index] }
     end
 
-    def +(vector)
-      self.class.new @vector + vector.to_a
+    def +(other)
+      self.class.new @vector + other.to_a
     end
 
     def addition_to(size: 512)
@@ -56,9 +55,9 @@ module CryptoGost
       @vector[index]
     end
 
-    def each(&block)
+    def each(&_block)
       @vector.each do |v|
-        block.call(v)
+        yield(v)
       end
     end
 
@@ -67,7 +66,7 @@ module CryptoGost
     end
 
     def to_byte_array
-      raise 'DimensionError' unless @vector.size % 8 == 0
+      raise 'DimensionError' unless (@vector.size % 8).zero?
       @vector.each_slice(8).map { |byte| byte.join.to_i(2) }
     end
 

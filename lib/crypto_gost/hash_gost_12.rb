@@ -3,6 +3,9 @@ require_relative 'binary_vector'
 require_relative 'refinements'
 
 module CryptoGost
+  # HashGost12
+  #
+  # @author WildDima
   module HashGost12
     # rubocop:disable Metrics/LineLength
     HASH_LENGTH = 512

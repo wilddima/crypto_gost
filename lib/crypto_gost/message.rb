@@ -33,7 +33,7 @@ module CryptoGost
       def hex_to_bin(hex)
         BinaryVector.new(hex.chars.map do |x|
                            bin = x.to_i(16).to_s(2)
-                           '0'*(4 - bin.length) + bin
+                           '0' * (4 - bin.length) + bin
                          end.join.chars.map(&:to_i))
       end
 

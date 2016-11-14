@@ -1,8 +1,13 @@
 module CryptoGost
   module HashGost12
+    # Compression
+    #
+    # @author WildDima
     class Compression
       def initialize(n, message, hash_vector)
-        @n, @message, @hash_vector = n, message, hash_vector
+        @n = n
+        @message = message
+        @hash_vector = hash_vector
       end
 
       def start
@@ -29,13 +34,17 @@ module CryptoGost
                                            .map { |byte| PI[byte] }
       end
 
+      # rubocop:disable Style/EachWithObject
       def permutation_t(vector)
-        BinaryVector.from_byte_array(vector.to_byte_array
-                                           .each.with_index.inject([]) do |byte_array, (byte, index)|
-                                              byte_array[T[index]] = byte
-                                              byte_array
-                                            end)
+        BinaryVector.from_byte_array(
+          vector.to_byte_array
+                .each.with_index.inject([]) do |b_arr, (byte, index)|
+                  b_arr[T[index]] = byte
+                  b_arr
+                end
+        )
       end
+      # rubocop:enable Style/EachWithObject
 
       def linear_transformation(vector)
         BinaryVector.from_byte_array(
@@ -48,22 +57,24 @@ module CryptoGost
 
       def small_linear_transformation(vector)
         BinaryVector.from_byte(
-          not_zeros_indexes(vector).inject(0) { |sum, index| sum ^= MATRIX_A[index] }
+          not_zeros_indexes(vector)
+            .inject(0) { |acc, elem| acc ^ MATRIX_A[elem] }
         ).addition_to(size: 64)
       end
 
-
+      # rubocop:disable Style/EachWithObject
       def func_e(first_vector, second_vector)
-        vectors = CONSTANTS_C.inject({v1: first_vector.dup,
-                                      v2: second_vector.dup}) do |vectors, const|
-                                        vectors[:v2] = lpsx_func(vectors[:v1], vectors[:v2])
-                                        vectors[:v1] = lpsx_func(vectors[:v1],
-                                                                 BinaryVector.from_byte(const.to_i(16),
-                                                                                        size: 512))
-                                        vectors
-                  end
+        vectors = CONSTANTS_C
+                  .inject(v1: first_vector.dup,
+                          v2: second_vector.dup) do |vs, const|
+          vs[:v2] = lpsx_func(vs[:v1], vs[:v2])
+          vs[:v1] = lpsx_func(vs[:v1], BinaryVector.from_byte(const.to_i(16),
+                                                              size: 512))
+          vs
+        end
         vectors[:v1] ^ vectors[:v2]
       end
+      # rubocop:enable Style/EachWithObject
 
       def not_zeros_indexes(vector)
         vector.map.with_index do |bit, index|
