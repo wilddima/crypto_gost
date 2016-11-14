@@ -2,7 +2,7 @@ module CryptoGost
   module HashGost12
     class Compression
       def initialize(n, message, hash_vector)
-        @n, @hash_vector, @message = n, hash_vector, message
+        @n, @message, @hash_vector = n, message, hash_vector
       end
 
       def start

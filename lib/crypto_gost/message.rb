@@ -1,19 +1,60 @@
-require 'pathname'
-require 'matrix'
-
 module CryptoGost
   # Message
   #
   # @author WildDima
   class Message
-    attr_accessor :message, :message_vector
+    private_class_method :new
 
-    def initialize(message)
-      @message = message_type message
+    attr_accessor :message, :vector
+
+    def initialize(message, vector)
+      @message = message
+      @vector = vector
     end
 
-    def to_vector
-      Vector.elements message.bytes
+    class << self
+      def from_bin(bin)
+        new bin_to_hex(bin), bin
+      end
+
+      def from_hex(hex)
+        new hex, hex_to_bin(hex)
+      end
+
+      def from_string(string)
+        new string, string.unpack('B*')
+      end
+
+      def from_path(path)
+        file = File.read(path)
+        new file, file.unpack('B*')
+      end
+
+      def hex_to_bin(hex)
+        BinaryVector.new(hex.chars.map do |x|
+                           bin = x.to_i(16).to_s(2)
+                           '0'*(4 - bin.length) + bin
+                         end.join.chars.map(&:to_i))
+      end
+
+      def bin_to_hex(bin)
+        bin.to_dec.to_s(16)
+      end
+    end
+
+    def addition_to(size: 512)
+      return if self.size >= size
+      (BinaryVector.new([1]) + vector).addition_to(size: 512)
+    end
+
+    def size
+      @vector.size
+    end
+
+    private
+
+    def to_vector(message)
+      BinaryVector.new message.to_bits
     end
 
     def to_bits(byteorder: :big)
@@ -25,23 +66,6 @@ module CryptoGost
       else
         raise ArgumentError,
               "byteorder must be equal to :big or :small, not: #{byteorder}"
-      end
-    end
-
-    def to_array_of_bits(byteorder: :big)
-      to_bits(byteorder).chars
-    end
-
-    private
-
-    def message_type(message)
-      case message.class
-      when Pathname
-        File.read(message)
-      when String
-        message
-      else
-        message.to_s
       end
     end
   end

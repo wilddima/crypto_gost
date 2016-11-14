@@ -58,5 +58,15 @@ module CryptoGost
                      7bcd9ed0efc889fb3002c6cd635afe94d8fa6bbbebab076120018021148466798a1d71efea48b9caefbacd1d7d476e98dea2594ac06fd85d6bcaa4cd81f32d1b
                      378ee767f11631bad21380b00449b17acda43c32bcdf1d77f82012d430219f9b5d80ef9d1891cc86e71da4aa88e12852faf417d5d9b21b9948bc924af11bd720).freeze
     # rubocop:enable Metrics/LineLength
+
+    class << self
+      def addition_in_ring(i1, i2, ring)
+        (i1 + i2) % ring
+      end
+
+      def addition_in_ring_to_binary(i1, i2, ring, size: 512)
+        BinaryVector.from_byte(addition_in_ring(i1, i2, ring), size: size)
+      end
+    end
   end
 end
