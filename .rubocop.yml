@@ -3,4 +3,5 @@ AllCops:
     - crypto_gost.gemspec
     - Rakefile
     - bin/test.rb
+    - lib/crypto_gost/modular_arithmetic.rb
     - spec/**/*

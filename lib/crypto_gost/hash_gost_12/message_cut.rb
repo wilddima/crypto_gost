@@ -24,13 +24,13 @@ module CryptoGost
                                          message.vector,
                                          @hash_vector).start
 
-          @n = CryptoGost::HashGost12.addition_in_ring_to_binary(
+          @n = HashGost12.addition_in_ring_to_binary(
             @n.to_dec,
             message.size,
             2**HASH_LENGTH
           )
 
-          @sum = CryptoGost::HashGost12.addition_in_ring_to_binary(
+          @sum = HashGost12.addition_in_ring_to_binary(
             @sum.to_dec,
             message.vector.to_dec,
             2**HASH_LENGTH

@@ -4,7 +4,6 @@ module CryptoGost
     #
     # @author WildDima
     class HashFunction
-      using CryptoGost::Refinements
       def initialize(message)
         @message = message
         @n = BinaryVector.new Array.new(512, 0)
@@ -25,14 +24,14 @@ module CryptoGost
                                        @message.addition_to(size: 512),
                                        @hash_vector).start
 
-        @n_bv = CryptoGost::HashGost12.addition_in_ring_to_binary(
+        @n_bv = HashGost12.addition_in_ring_to_binary(
           @n.to_dec,
           @message.size,
           2**HASH_LENGTH,
           size: 512
         )
 
-        @sum_bv = CryptoGost::HashGost12.addition_in_ring_to_binary(
+        @sum_bv = HashGost12.addition_in_ring_to_binary(
           @sum.to_dec,
           @message.addition_to(size: 512).to_dec,
           2**HASH_LENGTH,

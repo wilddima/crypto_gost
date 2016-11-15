@@ -1,13 +1,12 @@
-require 'matrix'
-require_relative 'binary_vector'
-require_relative 'refinements'
-
 module CryptoGost
   # HashGost12
   #
   # @author WildDima
   module HashGost12
     # rubocop:disable Metrics/LineLength
+    require_relative './hash_gost_12/hash_function'
+    require_relative './hash_gost_12/compression'
+    require_relative './hash_gost_12/message_cut'
     HASH_LENGTH = 512
 
     PI = [252, 238, 221, 17, 207, 110, 49, 22, 251, 196, 250, 218, 35, 197, 4, 77, 233, 119, 240,
