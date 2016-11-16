@@ -18,38 +18,47 @@ module CryptoGost
         @y = opts[:y]
       end
 
-      # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
       def +(other)
         unless other.is_a? EllipticCurvePoint
           raise ArgumentError, "Invalid other: #{other.inspect}"
         end
 
-        dx = other.x - x
-        dy = other.y - y
+        new_point = dup(x: other.x - @x,
+                        y: other.y - @y)
 
-        dx += @p if dx < 0
-        dy += @p if dy < 0
+        new_point.add_module!
 
-        s = (dy * ModularArithmetic.invert(dx, @p)) % @p
+        s = (new_point.y * ModularArithmetic.invert(new_point.x, @p)) % @p
 
-        new_point = self.class.new(p: @p,
-                                   a: @a,
-                                   b: @b,
-                                   gx: @gx,
-                                   gy: @gy,
-                                   n: @n,
-                                   h: @h,
-                                   x: (s**2 - 2 * x) % @p,
-                                   y: (s * (x - other.x) - y) % @p)
+        new_point.x = (s**2 - 2 * @x) % @p
+        new_point.y = (s * (@x - other.x) - @y) % @p
 
-        new_point.x += @p if new_point.x < 0
-        new_point.y += @p if new_point.y < 0
-
-        new_point
+        add_module! new_point.x, new_point.y
       end
-      # rubocop:enable Metrics/MethodLength
+
+      def double
+        new_point = dup(x: 3 * x**2 + @a,
+                        y: 2 * y)
+
+        new_point.add_module!
+
+        s = (new_point.y * ModularArithmetic.invert(new_point.x, @p)) % @p
+
+        new_point.x = (s**2 - 2 * @x) % @p
+        new_point.y = (s * (@x - new_point.x) - @y) % @p
+
+        new_point.add_module!
+      end
       # rubocop:enable Metrics/AbcSize
+
+      private
+
+      def add_module!
+        @x += @p if x < 0
+        @y += @p if y < 0
+        self
+      end
     end
   end
 end
