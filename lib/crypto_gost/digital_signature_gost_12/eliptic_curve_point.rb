@@ -5,6 +5,7 @@ module CryptoGost
     # author WildDima
     class EllipticCurvePoint
       attr_accessor :x, :y
+      attr_reader :n
 
       def initialize(opts)
         @p = opts[:p]
@@ -49,6 +50,17 @@ module CryptoGost
         new_point.y = (s * (@x - new_point.x) - @y) % @p
 
         new_point.add_module!
+      end
+
+      def *(other)
+        return unless other.is_a? Numeric
+        if other == 1
+          self
+        elsif (other % 2).odd?
+          self + (self * (other - 1))
+        else
+          other / 2 * double
+        end
       end
       # rubocop:enable Metrics/AbcSize
 
