@@ -1,5 +1,5 @@
 module CryptoGost
-  module HashGost12
+  module DigitalSignatureGost12
     # EllipticCurvePoint
     #
     # author WildDima
@@ -17,6 +17,10 @@ module CryptoGost
         @h = opts[:h]
         @x = opts[:x]
         @y = opts[:y]
+      end
+
+      def base_point
+        { x: @gx, y: @gy }
       end
 
       # rubocop:disable Metrics/AbcSize

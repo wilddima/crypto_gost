@@ -43,8 +43,7 @@ module CryptoGost
     end
 
     def addition_to(size: 512)
-      return if self.size >= size
-      (BinaryVector.new([1]) + vector).addition_to(size: 512)
+      CryptoGost.padding(vector, size: size)
     end
 
     def size
