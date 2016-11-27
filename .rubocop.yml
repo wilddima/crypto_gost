@@ -5,3 +5,9 @@ AllCops:
     - bin/test.rb
     - lib/crypto_gost/modular_arithmetic.rb
     - spec/**/*
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/MethodLength:
+  Max: 13

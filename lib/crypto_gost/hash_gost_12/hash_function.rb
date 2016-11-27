@@ -12,7 +12,7 @@ module CryptoGost
 
       # rubocop:disable Metrics/MethodLength
       # rubocop:disable Metrics/AbcSize
-      def hashing(digest_length: 512)
+      def hashing!(digest_length: 512)
         @digest_length = digest_length
         @hash_vector = create_hash_vector digest_length
         @sum, @n, @message, @hash_vector = MessageCut.new(@sum,
@@ -45,11 +45,11 @@ module CryptoGost
         @hash_vector = Compression.new(BinaryVector.new(Array.new(512, 0)),
                                        @sum_bv,
                                        @hash_vector).start
+        self
       end
       # rubocop:enable Metrics/AbcSize
       # rubocop:enable Metrics/MethodLength
 
-      # rubocop:disable Metrics/LineLength
       # TODO: MORE DRY
       def hash_vector
         case @digest_length
@@ -76,7 +76,6 @@ module CryptoGost
                 "digest length must be equal to 256 or 512, not #{digest_length}"
         end
       end
-      # rubocop:enable Metrics/LineLength
     end
   end
 end

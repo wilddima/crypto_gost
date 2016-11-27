@@ -70,6 +70,10 @@ module CryptoGost
       @vector.each_slice(8).map { |byte| byte.join.to_i(2) }
     end
 
+    def zero?
+      to_dec.zero?
+    end
+
     private
 
     def binary?
