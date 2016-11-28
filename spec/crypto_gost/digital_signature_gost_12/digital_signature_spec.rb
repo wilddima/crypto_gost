@@ -1,15 +1,55 @@
 require 'spec_helper'
+require 'securerandom'
 
 # TODO: REFACTOR
 describe CryptoGost::DigitalSignatureGost12::DigitalSignature do
-  context '256 bit hash, with 504 bit message' do
-    public_key = [57520216126176808443631405023338071176630104906313632182896741342206604859403, 17614944419213781543809391949654080031942662045363639260709847859438286763994]
-    message = CryptoGost::Message.from_bin(CryptoGost::BinaryVector.new '11010000100100011101000010110000110100001011100111010001100000101101000110001011'.chars.map(&:to_i))
-    ecp = CryptoGost::DigitalSignatureGost12::EllipticCurvePoint.new(CryptoGost::DigitalSignatureGost12::DEFAULT_GOST_OPTS, [2, 4018974056539037503335449422937059775635739389905545080690979365213431566280])
-    q = CryptoGost::DigitalSignatureGost12::DigitalSignature.new(message, ecp)
-    s = q.create(CryptoGost::BinaryVector.from_byte(55441196065363246126355624130324183196576709222340016572108097750006097525544))
-    it 'should has correct hash' do
-      expect(q.valid?(public_key, s)).to be_truthy
+  context 'elliptic curve signature' do
+    NAMES = %w(
+      Nistp192
+      Nistp224
+      Nistp256
+      Nistp384
+      Nistp521
+      Secp112r1
+      Secp112r2
+      Secp128r1
+      Secp128r2
+      Secp160k1
+      Secp160r1
+      Secp160r2
+      Secp192k1
+      Secp192r1
+      Secp224k1
+      Secp224r1
+      Secp256k1
+      Secp256r1
+      Secp384r1
+      Secp521r1
+      ).freeze
+
+    NAMES.each do |name|
+      context name do
+        let(:group) { Object.const_get("CryptoGost::DigitalSignatureGost12::Group::#{name}") }
+        let(:private_key) { group.generate_private_key }
+        let(:public_key) { group.generate_public_key private_key }
+        let(:message) { CryptoGost::Message.from_string(Faker::Lorem.sentence(3)) }
+        let(:sign) { CryptoGost::DigitalSignatureGost12::DigitalSignature.new(message, group) }
+        let(:signature) { sign.create(private_key) }
+
+        it 'should has valid sign' do
+          expect(sign.valid?(public_key, signature)).to be_truthy
+        end
+
+        context 'change message' do
+          let(:another_message) { CryptoGost::Message.from_string(Faker::Lorem.sentence(2)) }
+          let(:another_sign) { CryptoGost::DigitalSignatureGost12::DigitalSignature.new(another_message, group) }
+          let(:another_signature) { sign.create(private_key) }
+
+          it 'should has invalid sign' do
+            expect(another_sign.valid?(public_key, another_signature)).to be_falsy
+          end
+        end
+      end
     end
   end
 end

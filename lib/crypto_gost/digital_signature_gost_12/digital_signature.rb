@@ -4,31 +4,30 @@ module CryptoGost
     #
     # @author WildDima
     class DigitalSignature
-      def initialize(message, elliptic_curve)
+      attr_reader :group, :public_key
+      def initialize(message, group)
         @message = message
-        @elliptic_curve = elliptic_curve
+        @group = group
       end
 
       def create(private_key)
         @private_key = private_key
         loop do
-          rand_val = rand(1..@elliptic_curve.opts[:n])
+          rand_val = rand(1..group.order)
           r = r_func(rand_val)
           s = s_func(rand_val, private_key)
-          if !r.zero? || !s.zero?
-            break { r: BinaryVector.from_byte(r), s: BinaryVector.from_byte(s) }
-          end
+          break Signature.new(r: r, s: s) if !r.zero? || !s.zero?
         end
       end
 
-      def valid?(publick_key, sign)
-        @publick_key = publick_key
+      def valid?(public_key, sign)
+        @public_key = public_key
         @sign = sign
         @hashed_message = hash_message(@message, size: 256)
-        r = sign[:r]
-        s = sign[:s]
+        r = sign.r
+        s = sign.s
         return false if invalid_vector?(r) || invalid_vector?(s)
-        (c_param(publick_key, r.to_dec, s.to_dec).x % @elliptic_curve.opts[:n]) == r.to_dec
+        (c_param(r, s).x % group.order) == r
       end
 
       private
@@ -38,13 +37,12 @@ module CryptoGost
       end
 
       def r_func(rand_val)
-        (EllipticCurvePoint.new(@elliptic_curve.opts, @elliptic_curve.base_point) * rand_val).x %
-          @elliptic_curve.opts[:n]
+        (group.generator * rand_val).x % group.order
       end
 
       def s_func(rand_val, private_key)
-        (r_func(rand_val) * private_key.to_dec + rand_val * hash_mod_ecn.to_dec) %
-          @elliptic_curve.opts[:n]
+        (r_func(rand_val) * private_key + rand_val * hash_mod_ecn.to_dec) %
+          group.order
       end
 
       def hash_mod_ecn
@@ -57,7 +55,7 @@ module CryptoGost
       end
 
       def valid_vector?(vector)
-        (1...@elliptic_curve.opts[:n]).cover? vector.to_dec
+        (1...group.order).cover? vector
       end
 
       def invalid_vector?(vector)
@@ -65,15 +63,12 @@ module CryptoGost
       end
 
       def z_param(param)
-        param * mod_inv(hash_mod_ecn.to_dec, @elliptic_curve.opts[:n]) %
-          @elliptic_curve.opts[:n]
+        param * mod_inv(hash_mod_ecn.to_dec, group.order) %
+          group.order
       end
 
-      def c_param(publick_key, r, s)
-        EllipticCurvePoint.new(@elliptic_curve.opts,
-                               @elliptic_curve.base_point) * z_param(s) +
-          EllipticCurvePoint.new(@elliptic_curve.opts,
-                                 publick_key) * z_param(-r)
+      def c_param(r, s)
+        group.generator * z_param(s) + public_key * z_param(-r)
       end
     end
   end

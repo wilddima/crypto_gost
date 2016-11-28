@@ -22,7 +22,7 @@ module CryptoGost
       end
 
       def from_string(string)
-        new string, string.unpack('B*')
+        new string, BinaryVector.new(string.unpack('B*')[0].chars.map(&:to_i))
       end
 
       def from_path(path)
