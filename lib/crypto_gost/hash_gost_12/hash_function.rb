@@ -4,6 +4,8 @@ module CryptoGost
     #
     # @author WildDima
     class HashFunction
+      attr_reader :digest_length, :hash_vector, :sum, :n, :message
+
       def initialize(message)
         @message = message
         @n = BinaryVector.new Array.new(512, 0)
@@ -14,26 +16,25 @@ module CryptoGost
       # rubocop:disable Metrics/AbcSize
       def hashing!(digest_length: 512)
         @digest_length = digest_length
-        @hash_vector = create_hash_vector digest_length
-        @sum, @n, @message, @hash_vector = MessageCut.new(@sum,
-                                                          @n,
-                                                          @message,
-                                                          @hash_vector).start
+        @sum, @n, @message, @hash_vector = MessageCut.new(sum,
+                                                          n,
+                                                          message,
+                                                          create_hash_vector(digest_length)).start
 
-        @hash_vector = Compression.new(@n.addition_to(size: 512),
-                                       @message.addition_to(size: 512),
+        @hash_vector = Compression.new(n.addition_to(size: 512),
+                                       message.addition_to(size: 512),
                                        @hash_vector).start
 
         @n_bv = HashGost12.addition_in_ring_to_binary(
-          @n.to_dec,
-          @message.size,
+          n.to_dec,
+          message.size,
           2**HASH_LENGTH,
           size: 512
         )
 
         @sum_bv = HashGost12.addition_in_ring_to_binary(
-          @sum.to_dec,
-          @message.addition_to(size: 512).to_dec,
+          sum.to_dec,
+          message.addition_to(size: 512).to_dec,
           2**HASH_LENGTH,
           size: 512
         )
