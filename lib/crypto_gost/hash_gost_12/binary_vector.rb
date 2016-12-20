@@ -36,11 +36,11 @@ module CryptoGost
     end
 
     def to_dec
-      @vector.join.to_i(2)
+      to_s.to_i(2)
     end
 
     def to_hex
-      @vector.join.to_i(2).to_s(16)
+      to_s.to_i(2).to_s(16)
     end
 
     def to_s

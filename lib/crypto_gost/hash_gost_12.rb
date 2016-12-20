@@ -6,7 +6,6 @@ module CryptoGost
     # rubocop:disable Metrics/LineLength
     require_relative './hash_gost_12/hash_function'
     require_relative './hash_gost_12/compression'
-    require_relative './hash_gost_12/message_cut'
     require_relative './hash_gost_12/binary_vector'
     HASH_LENGTH = 512
 
@@ -27,9 +26,6 @@ module CryptoGost
     T = [0, 8, 16, 24, 32, 40, 48, 56, 1, 9, 17, 25, 33, 41, 49, 57, 2, 10, 18, 26, 34, 42, 50, 58,
          3, 11, 19, 27, 35, 43, 51, 59, 4, 12, 20, 28, 36, 44, 52, 60, 5, 13, 21, 29, 37, 45, 53, 61, 6, 14,
          22, 30, 38, 46, 54, 62, 7, 15, 23, 31, 39, 47, 55, 63].freeze
-    # T = [38, 23, 37, 55, 18, 7, 53, 1, 60, 21, 50, 46, 32, 15, 52, 10, 0, 27, 13, 26, 2, 54, 25, 29, 43, 40, 41, 49, 33, 44,
-    #  63, 8, 6, 36, 12, 16, 3, 59, 11, 24, 5, 57, 19, 58, 14, 35, 17, 20, 42, 62, 30, 45, 34, 51, 9, 56, 47, 31, 4, 39,
-    #  28, 61, 48, 22].freeze
 
     MATRIX_A = [0x8e20faa72ba0b470, 0x47107ddd9b505a38, 0xad08b0e0c3282d1c, 0xd8045870ef14980e,
                 0x6c022c38f90a4c07, 0x3601161cf205268d, 0x1b8e0b0e798c13c8, 0x83478b07b2468764,
@@ -67,7 +63,7 @@ module CryptoGost
         (i1 + i2) % ring
       end
 
-      def addition_in_ring_to_binary(i1, i2, ring, size: 512)
+      def addition_in_ring_to_binary(i1, i2, ring = 2**HASH_LENGTH, size: 512)
         BinaryVector.from_byte(addition_in_ring(i1, i2, ring), size: size)
       end
     end
