@@ -1,4 +1,5 @@
 require 'stribog'
+require 'securerandom'
 
 module CryptoGost
   # DigitalSignature
@@ -18,7 +19,7 @@ module CryptoGost
     def call(private_key)
       @private_key = private_key
       loop do
-        rand_val = rand(1..group.order)
+        rand_val = SecureRandom.random_number(1..group.order)
         r = r_func(rand_val)
         s = s_func(rand_val, private_key)
         break new_signature(r: r, s: s) if !r.zero? || !s.zero?
