@@ -1,0 +1,66 @@
+== CryptoGost
+
+Ruby library implementing GOST 34.10-12 ECC (not production ready)
+
+=== Installation
+
+Add this line to your application's Gemfile:
+
+  gem 'crypto_gost'
+
+
+And then execute:
+
+  $ bundle
+
+Or install it yourself as:
+
+  $ gem install crypto_gost
+
+=== Usage
+
+  group = CryptoGost::Group::Nistp192
+  private_key = group.generate_private_key
+  public_key = group.generate_public_key private_key
+  message = 'ruby'
+
+  signature = CryptoGost::Create.new(message, group).(private_key) #=> #<CryptoGost::Signature:0x007fbf1a128e38 @r=797072555870978995277638382002810748614228757069663574432, @s=3005972168119503640451023541340174801109033211348956501476>
+
+  # signature = CryptoGost::Create.new(message, group).call(private_key)
+
+  CryptoGost::Verify.new(message, group).(public_key, signature) # => true
+
+  # CryptoGost::Verify.new(message, group).call(public_key, signature)
+
+List of added elliptic curves:
+
+  Nistp192
+  Nistp224
+  Nistp256
+  Nistp384
+  Nistp521
+  Secp112r1
+  Secp112r2
+  Secp128r1
+  Secp128r2
+  Secp160k1
+  Secp160r1
+  Secp160r2
+  Secp192k1
+  Secp192r1
+  Secp224k1
+  Secp224r1
+  Secp256k1
+  Secp256r1
+  Secp384r1
+  Secp521r1
+
+=== Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/crypto_gost. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+
+=== License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
