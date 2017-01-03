@@ -32,13 +32,12 @@ describe CryptoGost do
         let(:group) { Object.const_get("CryptoGost::Group::#{name}") }
         let(:private_key) { group.generate_private_key }
         let(:public_key) { group.generate_public_key private_key }
-        let(:message) { 'ruby' }
+        let(:message) { Faker::Lorem.sentence(3) }
         let(:sign) { CryptoGost::Create.new(message, group) }
         let(:signature) { sign.(private_key) }
         let(:verify) { CryptoGost::Verify.new(message, group) }
 
         it 'should has valid sign' do
-          puts signature.inspect
           expect(verify.(public_key, signature)).to be_truthy
         end
 

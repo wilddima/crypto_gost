@@ -1,5 +1,8 @@
 == CryptoGost
 
+{<img src="https://travis-ci.org/WildDima/crypto_gost.svg?branch=master"
+alt="Build Status" />}[https://travis-ci.org/WildDima/crypto_gost]
+
 Ruby library implementing GOST 34.10-12 ECC (not production ready)
 
 === Installation
