@@ -1,5 +1,6 @@
 require 'stribog'
 require 'securerandom'
+require 'ruby-prof'
 
 module CryptoGost
   # DigitalSignature
@@ -17,6 +18,19 @@ module CryptoGost
     end
 
     def call(private_key)
+      # result = RubyProf.profile do
+      #   @private_key = private_key
+      #   loop do
+      #     rand_val = SecureRandom.random_number(1..group.order)
+      #     r = r_func(rand_val)
+      #     s = s_func(rand_val, private_key)
+      #     break new_signature(r: r, s: s) if !r.zero? || !s.zero?
+      #   end
+      # end
+      # printer = RubyProf::GraphHtmlPrinter.new(result)
+      # f = File.new('prof.html', 'w')
+      # printer.print(f, min_percent: 2)
+
       @private_key = private_key
       loop do
         rand_val = SecureRandom.random_number(1..group.order)
