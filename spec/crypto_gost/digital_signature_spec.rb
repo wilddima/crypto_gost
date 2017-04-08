@@ -4,29 +4,28 @@ require 'securerandom'
 # TODO: REFACTOR
 describe CryptoGost do
   context 'elliptic curve signature' do
-    # NAMES = %w(
-    #   Nistp192
-    #   Nistp224
-    #   Nistp256
-    #   Nistp384
-    #   Nistp521
-    #   Secp112r1
-    #   Secp112r2
-    #   Secp128r1
-    #   Secp128r2
-    #   Secp160k1
-    #   Secp160r1
-    #   Secp160r2
-    #   Secp192k1
-    #   Secp192r1
-    #   Secp224k1
-    #   Secp224r1
-    #   Secp256k1
-    #   Secp256r1
-    #   Secp384r1
-    #   Secp521r1
-    #   ).freeze
-      NAMES = ['Nistp192']
+    NAMES = %w(
+      Nistp192
+      Nistp224
+      Nistp256
+      Nistp384
+      Nistp521
+      Secp112r1
+      Secp112r2
+      Secp128r1
+      Secp128r2
+      Secp160k1
+      Secp160r1
+      Secp160r2
+      Secp192k1
+      Secp192r1
+      Secp224k1
+      Secp224r1
+      Secp256k1
+      Secp256r1
+      Secp384r1
+      Secp521r1
+      ).freeze
 
     NAMES.each do |name|
       context name do

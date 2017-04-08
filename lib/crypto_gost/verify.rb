@@ -30,7 +30,7 @@ module CryptoGost
     end
 
     def hash_mod_ecn
-      hashed = hash_message(message, size: 256)
+      hashed = hash_message(message, size: 256).dec
       hashed.zero? ? 1 : hashed
     end
 
@@ -47,7 +47,7 @@ module CryptoGost
     end
 
     def z_param(param)
-      param * mod_inv(hash_mod_ecn.to_dec, group.order) %
+      param * mod_inv(hash_mod_ecn, group.order) %
         group.order
     end
 
