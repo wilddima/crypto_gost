@@ -9,3 +9,4 @@
 /tmp/
 /spec/crypto_gost/digital_signature_gost_12/digital_signature_spec.rb
 /.byebug_history
+*.gem
