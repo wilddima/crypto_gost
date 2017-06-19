@@ -1,5 +1,3 @@
-require 'stribog'
-
 module CryptoGost
   # DigitalSignature
   #

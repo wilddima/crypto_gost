@@ -2,11 +2,14 @@
 #
 # @author WildDima
 module CryptoGost
-  require_relative './crypto_gost/version'
-  require_relative './crypto_gost/create'
-  require_relative './crypto_gost/verify'
-  require_relative './crypto_gost/signature'
-  require_relative './crypto_gost/group'
-  require_relative './crypto_gost/point'
-  require_relative './crypto_gost/modular_arithmetic'
+  require 'stribog'
+  require 'openssl'
+  require 'securerandom'
+  require 'crypto_gost/version'
+  require 'crypto_gost/create'
+  require 'crypto_gost/verify'
+  require 'crypto_gost/signature'
+  require 'crypto_gost/point'
+  require 'crypto_gost/group'
+  require 'crypto_gost/modular_arithmetic'
 end

@@ -1,6 +1,3 @@
-require 'securerandom'
-require_relative './point'
-
 module CryptoGost
   # Group
   #

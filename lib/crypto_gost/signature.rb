@@ -1,5 +1,3 @@
-require 'openssl'
-
 module CryptoGost
   # DigitalSignature
   #

@@ -37,7 +37,7 @@ describe CryptoGost do
         let(:signature) { sign.(private_key) }
         let(:verify) { CryptoGost::Verify.new(message, group) }
 
-        it 'should has valid sign' do
+        it 'has valid sign' do
           expect(verify.(public_key, signature)).to be_truthy
         end
 
@@ -45,7 +45,7 @@ describe CryptoGost do
           let(:another_message) { Faker::Lorem.sentence(2) }
           let(:verify) { CryptoGost::Verify.new(another_message, group) }
 
-          it 'should has invalid sign' do
+          it 'has invalid sign' do
             expect(verify.(public_key, signature)).to be_falsy
           end
         end
